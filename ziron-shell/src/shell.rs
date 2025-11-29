@@ -125,46 +125,92 @@ impl ZironShell {
         let context = ModuleContext::from_env()?;
         let mut module_data = Vec::new();
 
-        // Collect module data
-        // Symbol module (⚡)
-        module_data.push(ModuleData {
-            module: "symbol".to_string(),
-            data: serde_json::json!({
-                "text": " ⚡"
-            }),
-            cached: false,
-        });
-
-        // Sysinfo module
-        module_data.push(ModuleData {
-            module: "sysinfo".to_string(),
-            data: serde_json::json!({
-                "text": format!("{}@{}", context.user, context.hostname)
-            }),
-            cached: false,
-        });
-
-        // CWD module - shorten home directory to ~
-        let cwd = context.current_dir.display().to_string();
-        let home = std::env::var("HOME").unwrap_or_else(|_| format!("/home/{}", context.user));
-        let cwd_short = if cwd.starts_with(&home) {
-            cwd.replace(&home, "~")
+        // Get modules from theme segments (what should be displayed)
+        let modules_to_fetch: Vec<String> = if !self.renderer.theme().segments.is_empty() {
+            self.renderer.theme().segments.iter()
+                .map(|s| s.module.clone())
+                .collect()
         } else {
-            cwd
+            self.config.modules.clone()
         };
-        module_data.push(ModuleData {
-            module: "cwd".to_string(),
-            data: serde_json::json!({
-                "text": cwd_short
-            }),
-            cached: false,
-        });
+
+        // Fetch data from all modules
+        for module_name in &modules_to_fetch {
+            if let Some(data) = Self::fetch_module_data(module_name, &context)? {
+                module_data.push(data);
+            }
+        }
 
         // Render using theme
         let prompt = self.renderer.render(&context, &module_data)?;
-        // Return prompt as-is - separators already include proper spacing
-        // The separator " > " after cwd already includes the trailing space
         Ok(prompt)
+    }
+
+    /// Fetch module data (same logic as daemon)
+    fn fetch_module_data(module_name: &str, context: &ModuleContext) -> Result<Option<ziron_core::module::ModuleData>> {
+        use ziron_core::module::ModuleData;
+        
+        let result = match module_name {
+            "symbol" => {
+                Ok(ModuleData {
+                    module: "symbol".to_string(),
+                    data: serde_json::json!({"text": " ⚡"}),
+                    cached: false,
+                })
+            }
+            "sysinfo" => {
+                Ok(ModuleData {
+                    module: "sysinfo".to_string(),
+                    data: serde_json::json!({
+                        "text": format!("{}@{}", context.user, context.hostname)
+                    }),
+                    cached: false,
+                })
+            }
+            "cwd" => {
+                let cwd = context.current_dir.display().to_string();
+                let home = std::env::var("HOME").unwrap_or_else(|_| format!("/home/{}", context.user));
+                let cwd_short = if cwd.starts_with(&home) {
+                    cwd.replace(&home, "~")
+                } else {
+                    cwd
+                };
+                Ok(ModuleData {
+                    module: "cwd".to_string(),
+                    data: serde_json::json!({"text": cwd_short}),
+                    cached: false,
+                })
+            }
+            "git" => ziron_module_git::GitModule::fetch_data(context),
+            "exitcode" => exitcode::ExitCodeModule::fetch_data(context),
+            "timer" => timer::TimerModule::fetch_data(context),
+            "time" => time::TimeModule::fetch_data(context),
+            "venv" => venv::VenvModule::fetch_data(context),
+            "node" => node::NodeModule::fetch_data(context),
+            "rust" => rust::RustModule::fetch_data(context),
+            "conda" => conda::CondaModule::fetch_data(context),
+            "svn" => ziron_module_svn::SvnModule::fetch_data(context),
+            "mercurial" => ziron_module_mercurial::MercurialModule::fetch_data(context),
+            "docker" => ziron_module_docker::DockerModule::fetch_data(context),
+            "kubernetes" => ziron_module_kubernetes::KubernetesModule::fetch_data(context),
+            "aws" => ziron_module_aws::AwsModule::fetch_data(context),
+            "gcp" => ziron_module_gcp::GcpModule::fetch_data(context),
+            "azure" => ziron_module_azure::AzureModule::fetch_data(context),
+            "terraform" => ziron_module_terraform::TerraformModule::fetch_data(context),
+            "go" => ziron_module_go::GoModule::fetch_data(context),
+            _ => {
+                // Unknown module, return None
+                return Ok(None);
+            }
+        };
+        
+        match result {
+            Ok(data) => Ok(Some(data)),
+            Err(e) => {
+                tracing::warn!("Error fetching data for module {}: {}", module_name, e);
+                Ok(None)
+            }
+        }
     }
 
     /// Execute a command line

@@ -3,7 +3,8 @@ name = "ziron-default"
 background = "#15161e"
 
 # ============================================================================
-# Ziron Default Theme - Format: ⚡ root@hostname > ~/path >
+# Ziron Default Theme v0.4.0 - Enhanced with directory recognitions
+# Format: ⚡ user@host > ~/path > git:branch > docker:context # 
 # ============================================================================
 
 # Symbol - Blitz-Symbol am Anfang des Prompts
@@ -22,23 +23,143 @@ separator = " > "
 [[segments]]
 module = "cwd"
 color = "cyan"
-separator = " # "
+separator = " > "
 
 # ============================================================================
-# Geplante Module (werden in zukünftigen Versionen verfügbar sein)
+# Version Control Systems
+# ============================================================================
+
+# Git - Zeigt Branch, Status, Ahead/Behind, Commit-Hash (v0.4.0 erweitert)
+# Wird nur angezeigt, wenn ein Git-Repository erkannt wird
+[[segments]]
+module = "git"
+color = "blue"
+separator = " > "
+
+# SVN - Zeigt Branch/Tag/Trunk und Revision (v0.4.0 neu)
+[[segments]]
+module = "svn"
+color = "magenta"
+separator = " > "
+
+# Mercurial - Zeigt Branch und Revision (v0.4.0 neu)
+[[segments]]
+module = "mercurial"
+color = "magenta"
+separator = " > "
+
+# ============================================================================
+# Container & Orchestration
+# ============================================================================
+
+# Docker - Zeigt Context, Container-Count, Compose-Project (v0.4.0 neu)
+[[segments]]
+module = "docker"
+color = "blue"
+separator = " > "
+
+# Kubernetes - Zeigt Context, Namespace, Cluster (v0.4.0 neu)
+[[segments]]
+module = "kubernetes"
+color = "blue"
+separator = " > "
+
+# ============================================================================
+# Cloud Provider Context
+# ============================================================================
+
+# AWS - Zeigt Profile und Region (v0.4.0 neu)
+[[segments]]
+module = "aws"
+color = "yellow"
+separator = " > "
+
+# Google Cloud Platform - Zeigt Project und Account (v0.4.0 neu)
+[[segments]]
+module = "gcp"
+color = "blue"
+separator = " > "
+
+# Azure - Zeigt Subscription und Account (v0.4.0 neu)
+[[segments]]
+module = "azure"
+color = "blue"
+separator = " > "
+
+# ============================================================================
+# Development Environments
+# ============================================================================
+
+# Terraform - Zeigt Workspace (v0.4.0 neu)
+[[segments]]
+module = "terraform"
+color = "magenta"
+separator = " > "
+
+# Go - Zeigt Version und Module-Name (v0.4.0 neu)
+[[segments]]
+module = "go"
+color = "cyan"
+separator = " > "
+
+# ============================================================================
+# Language & Runtime Environments (v0.4.0 erweitert)
+# ============================================================================
+
+# Node.js - Zeigt Version (.nvmrc), Package-Manager (v0.4.0 erweitert)
+[[segments]]
+module = "node"
+color = "green"
+separator = " > "
+
+# Python/Venv - Zeigt Virtual Environment, Python-Version, Tool (v0.4.0 erweitert)
+[[segments]]
+module = "venv"
+color = "green"
+separator = " > "
+
+# Conda - Zeigt Conda Environment
+[[segments]]
+module = "conda"
+color = "green"
+separator = " > "
+
+# Rust - Zeigt Version (rust-toolchain.toml), Workspace (v0.4.0 erweitert)
+[[segments]]
+module = "rust"
+color = "red"
+separator = " > "
+
+# ============================================================================
+# System Information
 # ============================================================================
 
 # Exit-Code - Zeigt Fehlercode an, wenn der letzte Befehl fehlgeschlagen ist
-# Wichtig: Zeigt Fehlerstatus des letzten Befehls
-#          Hilft beim Debugging und zeigt sofort, ob ein Befehl erfolgreich war
+# Wird nur angezeigt, wenn exit_code != 0
+[[segments]]
+module = "exitcode"
+color = "red"
+separator = " "
+
+# Timer - Zeigt Ausführungszeit des letzten Befehls
+[[segments]]
+module = "timer"
+color = "yellow"
+separator = " "
+
+# Time - Zeigt aktuelle Uhrzeit
 # [[segments]]
-# module = "exitcode"
-# color = "red"
+# module = "time"
+# color = "white"
 # separator = " "
 
-# Prompt-Symbol - Zeigt das Eingabezeichen an (z.B. $, >, ❯)
-# Wichtig: Visuelles Zeichen, das zeigt, dass die Shell auf Eingabe wartet
-#          Verbessert die Lesbarkeit und Trennung zwischen Prompt und Eingabe
-# [[segments]]
-# module = "prompt"
+# ============================================================================
+# Right-side Prompt (optional, weniger wichtige Informationen)
+# ============================================================================
+
+# Right-side Prompt kann für weniger wichtige Info genutzt werden
+# Aktuell deaktiviert, kann bei Bedarf aktiviert werden
+# [[theme.right_segments]]
+# module = "time"
 # color = "white"
+# separator = " "

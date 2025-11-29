@@ -8,6 +8,24 @@ repository.workspace = true
 
 [dependencies]
 ziron-core = { path = "../ziron-core" }
+ziron-module-git = { path = "../modules/git" }
+ziron-module-sysinfo = { path = "../modules/sysinfo" }
+ziron-module-exitcode = { path = "../modules/exitcode" }
+ziron-module-timer = { path = "../modules/timer" }
+ziron-module-time = { path = "../modules/time" }
+ziron-module-venv = { path = "../modules/venv" }
+ziron-module-node = { path = "../modules/node" }
+ziron-module-rust = { path = "../modules/rust" }
+ziron-module-conda = { path = "../modules/conda" }
+ziron-module-svn = { path = "../modules/svn" }
+ziron-module-mercurial = { path = "../modules/mercurial" }
+ziron-module-docker = { path = "../modules/docker" }
+ziron-module-kubernetes = { path = "../modules/kubernetes" }
+ziron-module-aws = { path = "../modules/aws" }
+ziron-module-gcp = { path = "../modules/gcp" }
+ziron-module-azure = { path = "../modules/azure" }
+ziron-module-terraform = { path = "../modules/terraform" }
+ziron-module-go = { path = "../modules/go" }
 tokio.workspace = true
 anyhow.workspace = true
 tracing.workspace = true

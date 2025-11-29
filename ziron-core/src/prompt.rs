@@ -16,6 +16,11 @@ impl PromptRenderer {
         Self { theme }
     }
 
+    /// Get a reference to the theme
+    pub fn theme(&self) -> &Theme {
+        &self.theme
+    }
+
     /// Render a prompt from module data
     pub fn render(&self, _context: &ModuleContext, modules: &[ModuleData]) -> Result<String> {
         let mut output = String::new();
@@ -149,9 +154,14 @@ impl PromptRenderer {
         }
 
         // Render module data
-        if let Some(text) = module_data.data.get("text").and_then(|v| v.as_str()) {
-            output.push_str(text);
+        let text = module_data.data.get("text").and_then(|v| v.as_str()).unwrap_or("");
+        
+        // Skip rendering if text is empty (module has no data to display)
+        if text.is_empty() {
+            return Ok(String::new());
         }
+        
+        output.push_str(text);
 
         // Reset foreground color (but keep background)
         if segment_config.color.is_some() {

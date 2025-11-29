@@ -138,9 +138,10 @@ async fn main() -> Result<()> {
                         let registry_clone = registry.clone();
                         let renderer_clone = renderer.clone();
                         let cache_clone = cache.clone();
+                        let config_clone = config.clone();
                         let request_id = request_id_counter.fetch_add(1, Ordering::Relaxed);
                         tokio::spawn(async move {
-                            if let Err(e) = handle_client(&mut stream, &registry_clone, &renderer_clone, &cache_clone, request_id).await {
+                            if let Err(e) = handle_client(&mut stream, &registry_clone, &renderer_clone, &cache_clone, &config_clone, request_id).await {
                                 tracing::error!("Error handling client: {}", e);
                             }
                         });
@@ -183,6 +184,7 @@ async fn handle_client(
     registry: &ModuleRegistry,
     renderer: &PromptRenderer,
     cache: &Cache,
+    config: &Config,
     request_id: u64,
 ) -> Result<()> {
     // Read message length (4 bytes)
@@ -204,8 +206,19 @@ async fn handle_client(
             match request {
                 Request::GetPrompt { context } => {
                     let mut module_data = Vec::new();
-                    // Fetch data from all registered modules (with caching)
-                    for module_name in registry.all().keys() {
+                    
+                    // Get modules from theme segments (what should be displayed)
+                    // Fallback to config.modules if theme has no segments
+                    let modules_to_fetch: Vec<String> = if !renderer.theme().segments.is_empty() {
+                        renderer.theme().segments.iter()
+                            .map(|s| s.module.clone())
+                            .collect()
+                    } else {
+                        config.modules.clone()
+                    };
+                    
+                    // Fetch data from modules (with caching)
+                    for module_name in &modules_to_fetch {
                         let cache_key = format!("{}:{}", module_name, context.current_dir.display());
                         
                         // Try to get from cache first
