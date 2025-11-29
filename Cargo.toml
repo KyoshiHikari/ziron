@@ -18,7 +18,7 @@ members = [
 resolver = "2"
 
 [workspace.package]
-version = "0.2.0"
+version = "0.3.0"
 edition = "2021"
 authors = ["Ziron Contributors"]
 license = "MIT"
@@ -59,4 +59,7 @@ rustyline = "15.0"
 # Signal handling
 signal-hook = "0.3"
 signal-hook-tokio = { version = "0.3", features = ["futures-v0_3"] }
+
+# File system watching
+notify = "6.1"
 
