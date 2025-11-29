@@ -1,0 +1,7 @@
+[theme]
+name = "ziron-minimal"
+
+[[segments]]
+module = "cwd"
+color = "cyan"
+

@@ -1,0 +1,15 @@
+[package]
+name = "ziron-module-node"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+name = "node"
+path = "src/lib.rs"
+
+[dependencies]
+ziron-core = { path = "../../ziron-core" }
+serde_json.workspace = true
+

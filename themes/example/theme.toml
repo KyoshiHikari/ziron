@@ -1,0 +1,20 @@
+[theme]
+name = "example"
+
+# Beispiel-Theme für die Dokumentation
+# Dieses Theme zeigt alle verfügbaren Features
+
+[[segments]]
+module = "sysinfo"
+color = "green"
+separator = " → "
+
+[[segments]]
+module = "git"
+color = "blue"
+separator = " → "
+
+[[segments]]
+module = "cwd"
+color = "cyan"
+

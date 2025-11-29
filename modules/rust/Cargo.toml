@@ -1,0 +1,15 @@
+[package]
+name = "ziron-module-rust"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+
+[lib]
+name = "rust"
+path = "src/lib.rs"
+
+[dependencies]
+ziron-core = { path = "../../ziron-core" }
+serde_json.workspace = true
+

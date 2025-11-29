@@ -1,0 +1,30 @@
+[package]
+name = "ziron-shell"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+ziron-core = { path = "../ziron-core" }
+tokio.workspace = true
+anyhow.workspace = true
+tracing.workspace = true
+tracing-subscriber.workspace = true
+serde.workspace = true
+serde_json.workspace = true
+
+# Line editing and history
+rustyline = { version = "15.0", features = ["with-file-history"] }
+
+# Signal handling
+signal-hook = "0.3"
+signal-hook-tokio = { version = "0.3", features = ["futures-v0_3"] }
+
+# Globbing support
+glob = "0.3"
+
+# Temporary files for here-strings
+tempfile = "3.10"
+

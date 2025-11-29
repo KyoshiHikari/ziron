@@ -1,0 +1,7 @@
+name = "node"
+version = "0.1.0"
+description = "Node.js version display"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

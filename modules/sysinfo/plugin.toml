@@ -1,0 +1,7 @@
+name = "sysinfo"
+version = "0.1.0"
+description = "System information module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

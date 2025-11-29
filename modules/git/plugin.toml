@@ -1,0 +1,7 @@
+name = "git"
+version = "0.1.0"
+description = "Git status module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

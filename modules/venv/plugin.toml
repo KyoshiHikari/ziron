@@ -1,0 +1,7 @@
+name = "venv"
+version = "0.1.0"
+description = "Python virtual environment indicator"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

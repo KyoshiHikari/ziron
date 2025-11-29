@@ -1,0 +1,7 @@
+name = "rust"
+version = "0.1.0"
+description = "Rust toolchain version"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

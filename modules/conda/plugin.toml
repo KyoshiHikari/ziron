@@ -1,0 +1,7 @@
+name = "conda"
+version = "0.1.0"
+description = "Conda environment indicator"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

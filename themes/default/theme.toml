@@ -1,0 +1,44 @@
+[theme]
+name = "ziron-default"
+background = "#15161e"
+
+# ============================================================================
+# Ziron Default Theme - Format: ⚡ root@hostname > ~/path >
+# ============================================================================
+
+# Symbol - Blitz-Symbol am Anfang des Prompts
+[[segments]]
+module = "symbol"
+color = "yellow"
+separator = " "
+
+# User@Hostname - Identifiziert den Benutzer und den Host
+[[segments]]
+module = "sysinfo"
+color = "green"
+separator = " > "
+
+# Aktuelles Arbeitsverzeichnis (Current Working Directory)
+[[segments]]
+module = "cwd"
+color = "cyan"
+separator = " # "
+
+# ============================================================================
+# Geplante Module (werden in zukünftigen Versionen verfügbar sein)
+# ============================================================================
+
+# Exit-Code - Zeigt Fehlercode an, wenn der letzte Befehl fehlgeschlagen ist
+# Wichtig: Zeigt Fehlerstatus des letzten Befehls
+#          Hilft beim Debugging und zeigt sofort, ob ein Befehl erfolgreich war
+# [[segments]]
+# module = "exitcode"
+# color = "red"
+# separator = " "
+
+# Prompt-Symbol - Zeigt das Eingabezeichen an (z.B. $, >, ❯)
+# Wichtig: Visuelles Zeichen, das zeigt, dass die Shell auf Eingabe wartet
+#          Verbessert die Lesbarkeit und Trennung zwischen Prompt und Eingabe
+# [[segments]]
+# module = "prompt"
+# color = "white"

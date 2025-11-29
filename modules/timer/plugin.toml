@@ -1,0 +1,7 @@
+name = "timer"
+version = "0.1.0"
+description = "Display command execution time"
+author = "Ziron Contributors"
+
+hooks = ["post_prompt"]
+

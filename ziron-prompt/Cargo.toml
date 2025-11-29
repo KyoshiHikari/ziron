@@ -1,0 +1,13 @@
+[package]
+name = "ziron-prompt"
+version.workspace = true
+edition.workspace = true
+authors.workspace = true
+license.workspace = true
+repository.workspace = true
+
+[dependencies]
+ziron-core = { path = "../ziron-core" }
+tokio.workspace = true
+anyhow.workspace = true
+

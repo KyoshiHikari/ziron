@@ -1,0 +1,7 @@
+name = "exitcode"
+version = "0.1.0"
+description = "Display last command exit code"
+author = "Ziron Contributors"
+
+hooks = ["post_prompt"]
+
