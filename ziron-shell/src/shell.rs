@@ -36,8 +36,9 @@ impl ZironShell {
         let mut editor = Editor::new()
             .map_err(|e| Error::Config(format!("Failed to initialize line editor: {}", e)))?;
         
-        // Configure multi-column completion display
-        editor.set_completion_type(CompletionType::List);
+        // Configure multi-column completion display with menu navigation
+        // Circular type enables menu navigation with arrow keys
+        editor.set_completion_type(CompletionType::Circular);
         let _ = editor.set_max_history_size(10000); // Ignore errors for history size
         editor.set_completion_prompt_limit(100); // Limit completion items shown
         

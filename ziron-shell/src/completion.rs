@@ -98,20 +98,20 @@ impl ZironCompleter {
         // Add functions
         commands.extend(self.functions.iter().cloned());
 
-        // Add PATH executables
+        // Add PATH executables (optimized: use HashSet for deduplication)
+        let mut path_commands_set = std::collections::HashSet::new();
         if let Ok(path) = env::var("PATH") {
             for dir in path.split(':') {
                 if let Ok(entries) = std::fs::read_dir(dir) {
                     for entry in entries.flatten() {
                         if let Ok(file_name) = entry.file_name().into_string() {
-                            if !commands.contains(&file_name) {
-                                commands.push(file_name);
-                            }
+                            path_commands_set.insert(file_name);
                         }
                     }
                 }
             }
         }
+        commands.extend(path_commands_set);
 
         commands.sort();
         commands
@@ -233,7 +233,7 @@ impl Hinter for ZironCompleter {
     type Hint = String;
 
     fn hint(&self, line: &str, pos: usize, _ctx: &Context<'_>) -> Option<String> {
-        // Provide hints for commands
+        // Provide hints for commands (without caching for simplicity)
         let line_before_cursor = &line[..pos];
         let words: Vec<&str> = line_before_cursor.split_whitespace().collect();
         

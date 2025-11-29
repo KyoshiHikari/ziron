@@ -175,8 +175,7 @@ impl Parser {
                 }
                 ' ' | '\t' if !in_single_quote && !in_double_quote => {
                     if !current.is_empty() {
-                        tokens.push(current.clone());
-                        current.clear();
+                        tokens.push(std::mem::take(&mut current));
                     }
                 }
                 _ => {
