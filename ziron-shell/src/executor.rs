@@ -570,9 +570,12 @@ mod tests {
             stderr: None,
             stdin_file: None,
         };
-        let _ = executor.execute(&command);
-        // Verify file was created
+        // Execute should succeed
+        assert!(executor.execute(&command).is_ok());
+        // Verify file was created and contains the output
         assert!(std::path::Path::new(&output_path).exists());
+        let content = std::fs::read_to_string(&output_path).unwrap();
+        assert_eq!(content.trim(), "test");
     }
 }
 
