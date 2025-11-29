@@ -25,36 +25,36 @@ Ziron is a **full-featured shell** like `zsh`, `bash`, or `fish`, but with:
 ### Installation
 
 ```bash
-# Automatisches Setup
+# Automatic setup
 ./setup.sh
 
-# Oder manuell
+# Or manually
 cargo build --release
 ```
 
-### Erste Schritte
+### Getting Started
 
 ```bash
-# 1. Projekt bauen
+# 1. Build the project
 cargo build --release
 
-# 2. Ziron Shell starten
+# 2. Start Ziron Shell
 target/release/ziron-shell
 
-# 3. Konfiguration initialisieren (innerhalb der Shell oder extern)
+# 3. Initialize configuration (inside the shell or externally)
 target/release/ziron-cli init
 
-# 4. Plugins hinzufügen
+# 4. Add plugins
 target/release/ziron-cli plugin add git
 target/release/ziron-cli plugin add sysinfo
 
-# 5. Theme setzen
+# 5. Set theme
 target/release/ziron-cli theme set default
 ```
 
-**Ziron ist eine vollständige Shell** – Sie können sie direkt verwenden wie `zsh` oder `bash`!
+**Ziron is a full-featured shell** – You can use it directly like `zsh` or `bash`!
 
-**Ausführliche Anleitung:** Siehe [docs/USAGE.md](docs/USAGE.md)
+**Detailed Guide:** See [docs/USAGE.md](docs/USAGE.md)
 
 ## Project Structure
 
