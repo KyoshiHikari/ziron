@@ -555,21 +555,24 @@ mod tests {
 
     #[test]
     fn test_redirection_output() {
+        use tempfile::TempDir;
+        
+        let temp_dir = TempDir::new().unwrap();
+        let output_file = temp_dir.path().join("test_output.txt");
+        let output_path = output_file.to_str().unwrap().to_string();
+        
         let executor = Executor::new();
         let command = Command {
             name: "echo".to_string(),
             args: vec!["test".to_string()],
             stdin: None,
-            stdout: Some(crate::command::Redirection::Output("/tmp/test_output.txt".to_string())),
+            stdout: Some(crate::command::Redirection::Output(output_path.clone())),
             stderr: None,
             stdin_file: None,
         };
-        // Clean up test file
-        let _ = std::fs::remove_file("/tmp/test_output.txt");
         let _ = executor.execute(&command);
         // Verify file was created
-        assert!(std::path::Path::new("/tmp/test_output.txt").exists());
-        let _ = std::fs::remove_file("/tmp/test_output.txt");
+        assert!(std::path::Path::new(&output_path).exists());
     }
 }
 
