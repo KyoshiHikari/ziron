@@ -17,6 +17,9 @@ pub struct Theme {
 #[derive(Debug, Clone, Serialize, Deserialize)]
 pub struct ThemeConfig {
     pub name: String,
+    /// Color preset name (dark, light, solarized, etc.)
+    #[serde(default)]
+    pub preset: Option<String>,
     /// Background color as hex code (e.g., "#15161e")
     #[serde(default)]
     pub background: Option<String>,
@@ -49,14 +52,76 @@ pub struct Rule {
     pub value: serde_json::Value,
 }
 
+/// Color theme presets
+pub fn get_color_preset(preset_name: &str) -> Option<std::collections::HashMap<String, String>> {
+    let presets: std::collections::HashMap<&str, std::collections::HashMap<&str, &str>> = [
+        ("dark", [
+            ("background", "#15161e"),
+            ("foreground", "#c9d1d9"),
+            ("primary", "#58a6ff"),
+            ("secondary", "#79c0ff"),
+            ("success", "#3fb950"),
+            ("warning", "#d29922"),
+            ("error", "#f85149"),
+        ].iter().cloned().collect()),
+        ("light", [
+            ("background", "#ffffff"),
+            ("foreground", "#24292f"),
+            ("primary", "#0969da"),
+            ("secondary", "#0550ae"),
+            ("success", "#1a7f37"),
+            ("warning", "#9a6700"),
+            ("error", "#cf222e"),
+        ].iter().cloned().collect()),
+        ("solarized", [
+            ("background", "#002b36"),
+            ("foreground", "#839496"),
+            ("primary", "#268bd2"),
+            ("secondary", "#2aa198"),
+            ("success", "#859900"),
+            ("warning", "#b58900"),
+            ("error", "#dc322f"),
+        ].iter().cloned().collect()),
+        ("nord", [
+            ("background", "#2e3440"),
+            ("foreground", "#d8dee9"),
+            ("primary", "#5e81ac"),
+            ("secondary", "#81a1c1"),
+            ("success", "#a3be8c"),
+            ("warning", "#ebcb8b"),
+            ("error", "#bf616a"),
+        ].iter().cloned().collect()),
+    ].iter().cloned().collect();
+
+    presets.get(preset_name).map(|preset| {
+        preset.iter()
+            .map(|(k, v)| (k.to_string(), v.to_string()))
+            .collect()
+    })
+}
+
 impl Theme {
     /// Load a theme from a TOML file
     pub fn load_from(path: &Path) -> Result<Self> {
         let content = std::fs::read_to_string(path)
             .map_err(|e| Error::Theme(format!("Failed to read theme file: {}", e)))?;
 
-        let theme: Theme = toml::from_str(&content)
+        let mut theme: Theme = toml::from_str(&content)
             .map_err(|e| Error::Theme(format!("Failed to parse theme: {}", e)))?;
+        
+        // Apply color preset if specified
+        if let Some(preset_name) = &theme.config.preset {
+            if let Some(preset_colors) = get_color_preset(preset_name) {
+                // Merge preset colors with custom palette (custom takes precedence)
+                let mut merged_palette = preset_colors;
+                if let Some(custom_palette) = &theme.config.color_palette {
+                    for (k, v) in custom_palette {
+                        merged_palette.insert(k.clone(), v.clone());
+                    }
+                }
+                theme.config.color_palette = Some(merged_palette);
+            }
+        }
         
         Ok(theme)
     }

@@ -32,7 +32,8 @@ pub struct ZironShell {
 impl ZironShell {
     /// Create a new shell instance
     pub fn new(config: Config, renderer: PromptRenderer) -> Result<Self> {
-        let completer = ZironCompleter::new();
+        let mut completer = ZironCompleter::new();
+        completer.set_partial_completion(config.completion.partial_completion);
         let mut editor = Editor::new()
             .map_err(|e| Error::Config(format!("Failed to initialize line editor: {}", e)))?;
         

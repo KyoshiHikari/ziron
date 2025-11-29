@@ -13,6 +13,8 @@ pub struct Config {
     #[serde(default)]
     pub performance: PerformanceConfig,
     #[serde(default)]
+    pub completion: CompletionConfig,
+    #[serde(default)]
     pub modules: Vec<String>,
     #[serde(default)]
     pub theme: Option<String>,
@@ -23,6 +25,7 @@ impl Default for Config {
         Self {
             shell: ShellConfig::default(),
             performance: PerformanceConfig::default(),
+            completion: CompletionConfig::default(),
             modules: vec![],
             theme: Some("default".to_string()), // Standard-Theme: ziron-default
         }
@@ -63,6 +66,24 @@ impl Default for PerformanceConfig {
 
 fn default_cache_ttl() -> u64 {
     50
+}
+
+#[derive(Debug, Clone, Serialize, Deserialize)]
+pub struct CompletionConfig {
+    #[serde(default = "default_partial_completion")]
+    pub partial_completion: bool,
+}
+
+impl Default for CompletionConfig {
+    fn default() -> Self {
+        Self {
+            partial_completion: default_partial_completion(),
+        }
+    }
+}
+
+fn default_partial_completion() -> bool {
+    true // Enable by default
 }
 
 impl Config {

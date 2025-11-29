@@ -29,6 +29,7 @@ pub struct ZironCompleter {
     functions: Vec<String>,
     completion_functions: std::collections::HashMap<String, Box<dyn CompletionFunction>>,
     case_insensitive: bool,
+    partial_completion: bool,
 }
 
 impl Clone for ZironCompleter {
@@ -39,6 +40,7 @@ impl Clone for ZironCompleter {
             functions: self.functions.clone(),
             completion_functions: std::collections::HashMap::new(), // Can't clone trait objects
             case_insensitive: self.case_insensitive,
+            partial_completion: self.partial_completion,
         }
     }
 }
@@ -51,7 +53,13 @@ impl ZironCompleter {
             functions: Vec::new(),
             completion_functions: std::collections::HashMap::new(),
             case_insensitive: false,
+            partial_completion: true, // Enable by default
         }
+    }
+
+    /// Set partial completion enabled/disabled
+    pub fn set_partial_completion(&mut self, enabled: bool) {
+        self.partial_completion = enabled;
     }
 
     pub fn add_alias(&mut self, alias: String) {
@@ -132,6 +140,52 @@ impl ZironCompleter {
             .map(|(key, _)| key)
             .collect()
     }
+
+    /// Find common prefix of multiple strings
+    fn find_common_prefix(strings: &[String]) -> String {
+        if strings.is_empty() {
+            return String::new();
+        }
+        if strings.len() == 1 {
+            return strings[0].clone();
+        }
+
+        let first = &strings[0];
+        let mut prefix_len = first.len();
+
+        for s in strings.iter().skip(1) {
+            prefix_len = prefix_len.min(s.len());
+            for (i, ch) in first.chars().take(prefix_len).enumerate() {
+                if s.chars().nth(i) != Some(ch) {
+                    prefix_len = i;
+                    break;
+                }
+            }
+        }
+
+        first.chars().take(prefix_len).collect()
+    }
+
+    /// Apply partial completion if enabled
+    fn apply_partial_completion(&self, matches: &mut Vec<Pair>, prefix: &str) {
+        if !self.partial_completion || matches.len() <= 1 {
+            return;
+        }
+
+        // Get all replacement strings
+        let replacements: Vec<String> = matches.iter().map(|p| p.replacement.clone()).collect();
+        let common_prefix = Self::find_common_prefix(&replacements);
+
+        // If common prefix is longer than current prefix, use it
+        if common_prefix.len() > prefix.len() && common_prefix.starts_with(prefix) {
+            // Replace all matches with a single match that has the common prefix
+            matches.clear();
+            matches.push(Pair {
+                display: format!("{} (common prefix)", common_prefix),
+                replacement: common_prefix,
+            });
+        }
+    }
 }
 
 impl Completer for ZironCompleter {
@@ -151,7 +205,7 @@ impl Completer for ZironCompleter {
             // Complete command names
             let prefix = words.first().copied().unwrap_or("");
             let commands = self.get_commands();
-            let matches: Vec<Pair> = commands
+            let mut matches: Vec<Pair> = commands
                 .iter()
                 .filter(|cmd| self.matches(cmd, prefix))
                 .map(|cmd| {
@@ -164,6 +218,8 @@ impl Completer for ZironCompleter {
                 .collect();
 
             if !matches.is_empty() {
+                // Apply partial completion if enabled
+                self.apply_partial_completion(&mut matches, prefix);
                 let start_pos = if prefix.is_empty() { pos } else { pos - prefix.len() };
                 return Ok((start_pos, matches));
             }
