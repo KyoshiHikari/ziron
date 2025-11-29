@@ -1,0 +1,7 @@
+name = "aws"
+version = "0.1.0"
+description = "AWS profile module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

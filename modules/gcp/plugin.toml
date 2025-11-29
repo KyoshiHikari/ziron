@@ -1,0 +1,7 @@
+name = "gcp"
+version = "0.1.0"
+description = "Google Cloud Platform module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

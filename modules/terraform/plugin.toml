@@ -1,0 +1,7 @@
+name = "terraform"
+version = "0.1.0"
+description = "Terraform workspace module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

@@ -1,0 +1,7 @@
+name = "azure"
+version = "0.1.0"
+description = "Azure subscription module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

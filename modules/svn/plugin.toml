@@ -1,0 +1,7 @@
+name = "svn"
+version = "0.1.0"
+description = "SVN (Subversion) status module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

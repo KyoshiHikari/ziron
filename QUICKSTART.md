@@ -118,5 +118,5 @@ theme = "default"
 ## 📚 Weitere Informationen
 
 - **Vollständige Anleitung**: [docs/USAGE.md](docs/USAGE.md)
-- **Projekt-Dokumentation**: [docs/INSTRUCTION.md](docs/INSTRUCTION.md)
+- **Projekt-Dokumentation**: Siehe [docs/](docs/) für alle Dokumentationen
 

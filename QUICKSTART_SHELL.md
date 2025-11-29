@@ -94,5 +94,5 @@ chsh -s /root/projects/ziron/target/release/ziron-shell
 ## Weitere Informationen
 
 - **Vollständige Anleitung**: [docs/SHELL_USAGE.md](docs/SHELL_USAGE.md)
-- **Projekt-Dokumentation**: [docs/INSTRUCTION.md](docs/INSTRUCTION.md)
+- **Projekt-Dokumentation**: Siehe [docs/](docs/) für alle Dokumentationen
 

@@ -1,0 +1,7 @@
+name = "docker"
+version = "0.1.0"
+description = "Docker context module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

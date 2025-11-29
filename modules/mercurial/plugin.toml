@@ -1,0 +1,7 @@
+name = "mercurial"
+version = "0.1.0"
+description = "Mercurial (hg) status module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

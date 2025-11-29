@@ -291,18 +291,43 @@ async fn handle_client(
 
 async fn fetch_module_data(
     module_name: &str,
-    _context: &ModuleContext,
+    context: &ModuleContext,
     _registry: &ModuleRegistry,
 ) -> Result<Option<ModuleData>> {
-    // In a real implementation, this would call the actual module
-    // For now, return placeholder data
-    Ok(Some(ModuleData {
-        module: module_name.to_string(),
-        data: serde_json::json!({
-            "text": format!("[{}]", module_name)
-        }),
-        cached: false,
-    }))
+    // Call the actual module implementation
+    // Since Rust is statically compiled, we use a match statement
+    let result = match module_name {
+        "git" => ziron_module_git::GitModule::fetch_data(context),
+        "sysinfo" => ziron_module_sysinfo::SysInfoModule::fetch_data(context),
+        "exitcode" => exitcode::ExitCodeModule::fetch_data(context),
+        "timer" => timer::TimerModule::fetch_data(context),
+        "time" => time::TimeModule::fetch_data(context),
+        "venv" => venv::VenvModule::fetch_data(context),
+        "node" => node::NodeModule::fetch_data(context),
+        "rust" => rust::RustModule::fetch_data(context),
+        "conda" => conda::CondaModule::fetch_data(context),
+        "svn" => ziron_module_svn::SvnModule::fetch_data(context),
+        "mercurial" => ziron_module_mercurial::MercurialModule::fetch_data(context),
+        "docker" => ziron_module_docker::DockerModule::fetch_data(context),
+        "kubernetes" => ziron_module_kubernetes::KubernetesModule::fetch_data(context),
+        "aws" => ziron_module_aws::AwsModule::fetch_data(context),
+        "gcp" => ziron_module_gcp::GcpModule::fetch_data(context),
+        "azure" => ziron_module_azure::AzureModule::fetch_data(context),
+        "terraform" => ziron_module_terraform::TerraformModule::fetch_data(context),
+        "go" => ziron_module_go::GoModule::fetch_data(context),
+        _ => {
+            // Unknown module, return None
+            return Ok(None);
+        }
+    };
+    
+    match result {
+        Ok(data) => Ok(Some(data)),
+        Err(e) => {
+            tracing::warn!("Error fetching data for module {}: {}", module_name, e);
+            Ok(None)
+        }
+    }
 }
 
 fn load_modules(_registry: &mut ModuleRegistry) -> Result<()> {

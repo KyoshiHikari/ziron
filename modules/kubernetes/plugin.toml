@@ -1,0 +1,7 @@
+name = "kubernetes"
+version = "0.1.0"
+description = "Kubernetes context module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+

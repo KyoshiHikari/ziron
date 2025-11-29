@@ -1,0 +1,7 @@
+name = "go"
+version = "0.1.0"
+description = "Go module"
+author = "Ziron Contributors"
+
+hooks = ["pre_prompt"]
+
