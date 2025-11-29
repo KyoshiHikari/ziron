@@ -1,4 +1,7 @@
 [workspace]
+
+[dev-dependencies]
+cargo-tarpaulin = "0.27"
 members = [
     "ziron-core",
     "ziron-cli",

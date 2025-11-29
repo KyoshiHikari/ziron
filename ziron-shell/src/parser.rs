@@ -6,12 +6,14 @@ use ziron_core::error::{Error, Result};
 /// Context for variable expansion (script arguments, etc.)
 pub struct ExpansionContext {
     pub script_args: Vec<String>,
+    pub last_exit_code: Option<i32>,
 }
 
 impl Default for ExpansionContext {
     fn default() -> Self {
         Self {
             script_args: Vec::new(),
+            last_exit_code: None,
         }
     }
 }
@@ -388,6 +390,13 @@ impl Parser {
 
     /// Expand a single token (variable expansion, tilde expansion, command substitution, globbing, arithmetic)
     fn expand_token(token: &str, ctx: &ExpansionContext) -> Result<String> {
+        // Handle $? (last exit code)
+        if token == "$?" {
+            if let Some(code) = ctx.last_exit_code {
+                return Ok(code.to_string());
+            }
+            return Ok("0".to_string()); // Default to 0 if not set
+        }
         // First handle command substitution
         let token = Self::expand_command_substitution(token)?;
         
@@ -1085,6 +1094,7 @@ mod basic_tests {
     fn test_script_argument_expansion() {
         let ctx = ExpansionContext {
             script_args: vec!["arg1".to_string(), "arg2".to_string()],
+            last_exit_code: None,
         };
         let commands = Parser::parse_with_context("echo $1", &ctx).unwrap();
         assert_eq!(commands.len(), 1);

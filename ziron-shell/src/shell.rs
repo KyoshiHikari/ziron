@@ -6,6 +6,7 @@ use crate::jobs::JobManager;
 use crate::parser::Parser;
 use rustyline::error::ReadlineError;
 use rustyline::history::DefaultHistory;
+use rustyline::config::{CompletionType, Configurer};
 use rustyline::Editor;
 use ziron_core::config::Config;
 use ziron_core::error::{Error, Result};
@@ -25,6 +26,7 @@ pub struct ZironShell {
     directory_stack: Vec<std::path::PathBuf>,
     job_manager: JobManager,
     script_args: Vec<String>, // Script arguments ($1, $2, etc.)
+    last_exit_code: i32, // Last command exit code ($?)
 }
 
 impl ZironShell {
@@ -33,6 +35,11 @@ impl ZironShell {
         let completer = ZironCompleter::new();
         let mut editor = Editor::new()
             .map_err(|e| Error::Config(format!("Failed to initialize line editor: {}", e)))?;
+        
+        // Configure multi-column completion display
+        editor.set_completion_type(CompletionType::List);
+        let _ = editor.set_max_history_size(10000); // Ignore errors for history size
+        editor.set_completion_prompt_limit(100); // Limit completion items shown
         
         editor.set_helper(Some(completer.clone()));
 
@@ -49,6 +56,7 @@ impl ZironShell {
             directory_stack: Vec::new(),
             job_manager: JobManager::new(),
             script_args: Vec::new(),
+            last_exit_code: 0,
         })
     }
 
@@ -161,6 +169,7 @@ impl ZironShell {
     fn execute_line(&mut self, line: &str) -> Result<()> {
         let line = line.trim();
         if line.is_empty() {
+            self.last_exit_code = 0;
             return Ok(());
         }
 
@@ -175,9 +184,10 @@ impl ZironShell {
             }
         }
 
-        // Create expansion context with script arguments
+        // Create expansion context with script arguments and last exit code
         let expansion_ctx = crate::parser::ExpansionContext {
             script_args: self.script_args.clone(),
+            last_exit_code: Some(self.last_exit_code),
         };
         
         // Parse command
@@ -468,6 +478,8 @@ impl ZironShell {
         let content = std::fs::read_to_string(script_path)
             .map_err(|e| Error::Config(format!("Failed to read script: {}", e)))?;
         
+        let mut script_exit_code = 0;
+        
         // Execute each line
         for line in content.lines() {
             let line = line.trim();
@@ -477,9 +489,16 @@ impl ZironShell {
             
             if let Err(e) = self.execute_line(line) {
                 eprintln!("Error executing script line: {}", e);
+                script_exit_code = 1;
                 // Continue execution (don't stop on error unless explicitly needed)
+            } else {
+                // Update script exit code with last command's exit code
+                script_exit_code = self.last_exit_code;
             }
         }
+        
+        // Set script exit code as last exit code
+        self.last_exit_code = script_exit_code;
         
         Ok(())
     }
