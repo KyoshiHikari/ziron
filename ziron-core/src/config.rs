@@ -161,6 +161,7 @@ mod tests {
                 default: "bash".to_string(),
             },
             performance: PerformanceConfig { cache_ttl_ms: 100 },
+            completion: CompletionConfig::default(),
             modules: vec!["git".to_string(), "sysinfo".to_string()],
             theme: Some("default".to_string()),
         };
