@@ -24,3 +24,10 @@ Thumbs.db
 
 # Environment variables
 .env
+
+# Ignore all hidden files and directories (starting with .)
+.*
+# But keep important files
+!.gitignore
+!.git
+!.github
