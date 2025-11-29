@@ -562,9 +562,16 @@ mod tests {
         let output_path = output_file.to_str().unwrap().to_string();
         
         let executor = Executor::new();
+        // Use external command instead of builtin echo to test redirection
+        // Try /bin/sh first, fallback to sh if /bin/sh doesn't exist
+        let sh_cmd = if std::path::Path::new("/bin/sh").exists() {
+            "/bin/sh".to_string()
+        } else {
+            "sh".to_string()
+        };
         let command = Command {
-            name: "echo".to_string(),
-            args: vec!["test".to_string()],
+            name: sh_cmd,
+            args: vec!["-c".to_string(), "echo test".to_string()],
             stdin: None,
             stdout: Some(crate::command::Redirection::Output(output_path.clone())),
             stderr: None,
